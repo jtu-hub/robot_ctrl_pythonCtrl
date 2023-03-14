@@ -1,13 +1,12 @@
 import serial
-import serial.tools.list_ports
+from serial.tools import list_ports
 from threading import Thread
 import time
 from pynput import keyboard
 import copy
 
-########
-### Arduino communication
-########
+#--------------------------------------------------------------------------------------------------
+#--- ARDUINO COMMIUNICATION -----------------------------------------------------------------------
 
 class Arduino:
     def __init__(self, descriptiveDeviceName, portName, baudrate, timeout=1):
@@ -15,7 +14,7 @@ class Arduino:
         self.descriptiveDeviceName = descriptiveDeviceName
         self.portName = portName
         self.baudrate = baudrate
-        self._timeout=timeout
+        self._timeout = timeout
 
         # Communication
         self._rawReceivedMessage = None
@@ -211,7 +210,13 @@ class Arduino:
                     print("----------------------")
                     print("Raw message received on python side: ", self._rawReceivedMessage)
                     print("Messege received from the arduino: ", self.receivedMessages)
-                    print("Python message stored on", self.descriptiveDeviceName, ": ", self._echo_python_msg, "\n")
+                    print(
+                        "Python message stored on",
+                         self.descriptiveDeviceName,
+                         ": ",
+                         self._echo_python_msg,
+                         "\n"
+                    )
 
                 else:
                     print("Messege received from the arduino: ", self.receivedMessages)
@@ -243,50 +248,23 @@ class Arduino:
         else:
             print("----------------------")
             self.receive_message(printOutput=True)
-            print("Python message stored on", self.descriptiveDeviceName, ": ", self._echo_python_msg, "\n")
+            print(
+                "Python message stored on", 
+                self.descriptiveDeviceName, 
+                ": ", 
+                self._echo_python_msg, 
+                "\n"
+            )
 
 
         for key, value in self.receivedMessages.items():
             if value is None:
                 print("Check if message name: ", key, " agrees with the arduino side")
 
+#--------------------------------------------------------------------------------------------------
+#--- FUNC DEF -------------------------------------------------------------------------------------
 
-########
-### Key commands
-########
-
-class Key():
-    def __init__(self):
-        self.keyPressLatching = None
-        self._keyReleaseLatching = None
-        self.keyPress = None
-        self._start_keyboard_listener()
-
-    def _on_press(self, key):
-        try:
-            self.keyPressLatching = key.char
-            self.keyPress = key.char
-
-        except AttributeError:
-            self.keyPressLatching = key
-            self.keyPress = key
-
-
-    def _on_release(self, key):
-        try:
-            self._keyReleaseLatching = key.char
-
-            if self._keyReleaseLatching == self.keyPress:
-                self.keyPress = None
-
-        except AttributeError:
-            self._keyReleaseLatching = key
-
-            if self._keyReleaseLatching == self.keyPress:
-                self.keyPress = None
-
-
-    def _start_keyboard_listener(self):
-        listener = keyboard.Listener(on_press=self._on_press, on_release=self._on_release)
-        listener.start()
-        print("keyboard listener started")
+def find_used_com_ports():
+    ports = list(list_ports.comports())
+    for port in ports:
+        print(port.device)

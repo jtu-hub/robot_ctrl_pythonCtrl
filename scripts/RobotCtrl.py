@@ -141,15 +141,25 @@ class RobotCtrl(object):
     def _send_message_to_robot(self, msg):
         return self._ard.send_message(msg)
 
-
-# %% 1. Use functions to control the robot---------------------------------------------------------
+# %% 0. Find the COM port--------------------------------------------------------------------------
 #TODO:  Find COM port to which you robot is connected and set the variable comport to the correct
-#       value, e.g. COM5, COM6, ... 
+#       value at line 155, e.g. COM5, COM6, ... 
 #       To do so type Device Manager in the start search and open it. 
-#       Then look under "Anschlüsse (COM & LPT)" 
-com_port = "COM5"
+#       Then look under "Anschlüsse (COM & LPT)" or use the function:
+#       find_used_com_ports()
 
-#creating virtual robot
+#HINT:  print all COM ports in use, call the function once with the robot disconnected and once 
+#       with it connected to see thich COM port is used by it.
+find_used_com_ports()
+
+com_port = None
+
+# %% 1. Create robot control object----------------------------------------------------------------
+#creating virtual robot, now you can control the robot by calling the above defined functions like:
+#   - my_robot.open_gripper() or 
+#   - my_robot.move_ax1(45)
+#   - ...
+
 baudrate=115200                         #"communication speed"
 my_robot=RobotCtrl(com_port, baudrate)  #creating variable my_robot to control the robot
 
